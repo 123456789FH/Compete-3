@@ -1,1498 +1,0 @@
-<!doctype html>
-<html lang="ar" dir="rtl" class="h-full">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>منصة نافس | رياضيات ثالث ابتدائي</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    * { font-family: 'Tajawal', sans-serif; }
-    body { background: radial-gradient(1200px 600px at 80% -10%, rgba(217,70,239,0.10), transparent 55%),
-                   radial-gradient(900px 500px at -10% 10%, rgba(59,130,246,0.10), transparent 55%),
-                   #f8fafc; }
-    .chip { border: 1px solid rgba(148,163,184,0.7); background: rgba(255,255,255,0.75); }
-    .tab-btn[aria-selected="true"] { background: rgba(99,102,241,0.10); border-color: rgba(99,102,241,0.45); }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-
-    /* Print */
-    @media print {
-      body { background: #fff !important; }
-      .no-print { display: none !important; }
-      .print-area { box-shadow: none !important; border: none !important; }
-      .print-area * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .page-break { break-after: page; page-break-after: always; }
-      .avoid-break { break-inside: avoid; page-break-inside: avoid; }
-      a:link, a:visited { color: #111827; text-decoration: none; }
-      [contenteditable="true"] { outline: none !important; }
-    }
-  </style>
-</head>
-
-<body class="min-h-screen">
-  <div class="max-w-7xl mx-auto p-4 sm:p-6">
-    <!-- Header -->
-    <header class="no-print flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden">
-          <img class="app-logo w-10 h-10 object-contain" alt="شعار"/>
-        </div>
-        <div>
-          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900">منصة نافس — رياضيات ثالث ابتدائي</h1>
-          <p class="text-slate-600 text-sm">خطة علاجية + إثرائية + تدريبات + اختبارات أسبوعية (اختيار من متعدد) — جاهز للطباعة</p>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap gap-2">
-        <button id="btnPrint" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">🖨️ طباعة</button>
-        <button id="btnExport" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">⬇️ تصدير البيانات</button>
-        <label class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white cursor-pointer">
-          ⬆️ استيراد البيانات
-          <input id="importFile" type="file" accept="application/json" class="hidden"/>
-        </label>
-        <button id="btnResetAll" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">↩️ إعادة ضبط</button>
-      </div>
-    </header>
-
-    <!-- Tabs -->
-    <nav class="no-print mt-4 flex flex-wrap gap-2">
-      <button class="tab-btn chip px-3 py-2 rounded-xl text-sm font-bold" data-tab="dashboard" aria-selected="true">🏠 الرئيسية</button>
-      <button class="tab-btn chip px-3 py-2 rounded-xl text-sm font-bold" data-tab="plan" aria-selected="false">📋 الخطة الرسمية</button>
-      <button class="tab-btn chip px-3 py-2 rounded-xl text-sm font-bold" data-tab="training" aria-selected="false">🎯 التدريب اليومي</button>
-      <button class="tab-btn chip px-3 py-2 rounded-xl text-sm font-bold" data-tab="quiz" aria-selected="false">🧪 اختبار أسبوعي</button>
-      <button class="tab-btn chip px-3 py-2 rounded-xl text-sm font-bold" data-tab="bank" aria-selected="false">🗂️ بنك الأسئلة</button>
-    </nav>
-
-    <!-- Content -->
-    <main class="mt-4">
-      <!-- Dashboard -->
-      <section id="tab-dashboard" class="print-area bg-white border border-slate-200 rounded-3xl shadow-sm p-4 sm:p-6">
-        <div class="grid lg:grid-cols-3 gap-4">
-          <div class="lg:col-span-2">
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-start gap-3">
-                <img class="app-logo w-12 h-12 object-contain rounded-2xl border border-slate-200 bg-white p-1" alt="شعار"/>
-                <div>
-                  <h2 class="text-lg font-extrabold text-slate-900">بيانات الغلاف</h2>
-                <p class="text-slate-600 text-sm mt-1">اكتب البيانات مرة واحدة — تُستخدم تلقائيًا في الطباعة داخل الخطة والاختبارات.</p>
-                </div>
-              </div>
-              <button id="btnPrintCover" class="no-print chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">🖨️ طباعة الغلاف</button>
-            </div>
-
-            <div class="mt-4 grid sm:grid-cols-2 gap-3">
-              <div>
-                <label class="text-sm font-bold text-slate-700">اسم المدرسة</label>
-                <input id="schoolName" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="مثال: مدرسة __________" />
-              </div>
-              <div>
-                <label class="text-sm font-bold text-slate-700">الصف / الشعبة</label>
-                <input id="className" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="مثال: ثالث (ب)" />
-              </div>
-              <div>
-                <label class="text-sm font-bold text-slate-700">اسم المعلم</label>
-                <input id="teacherName" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="مثال: أ/ ________" />
-              </div>
-              <div>
-                <label class="text-sm font-bold text-slate-700">الفصل الدراسي</label>
-                <input id="termName" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="مثال: الفصل الثاني" />
-              </div>
-              <div>
-                <label class="text-sm font-bold text-slate-700">العام الدراسي</label>
-                <input id="yearName" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="مثال: 1447هـ" />
-              </div>
-              <div>
-                <label class="text-sm font-bold text-slate-700">اسم الطالب (للاختبارات)</label>
-                <input id="studentName" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="اكتب اسمك هنا" />
-              </div>
-            </div>
-
-            <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <h3 class="font-extrabold text-slate-900">طريقة الاستخدام السريعة</h3>
-              <ol class="mt-2 text-slate-700 text-sm list-decimal pr-5 space-y-1">
-                <li>اذهب إلى <b>الخطة الرسمية</b> واختر (علاجي/إثرائي) ثم اطبع.</li>
-                <li>اذهب إلى <b>التدريب اليومي</b> واختر المهارة + رقم الأسبوع ثم أنشئ تدريبًا جاهزًا.</li>
-                <li>اذهب إلى <b>اختبار أسبوعي</b> واختر المهارة + رقم الأسبوع ثم اطبع نموذج الاختيار من متعدد.</li>
-                <li>استخدم <b>تصدير البيانات</b> لحفظ تعديلاتك (خطة/بيانات الغلاف) واستيرادها لاحقًا.</li>
-              </ol>
-            </div>
-          </div>
-
-          <aside class="lg:col-span-1">
-            <div class="rounded-3xl border border-slate-200 bg-white p-4">
-              <h3 class="text-lg font-extrabold text-slate-900">الجاهزية</h3>
-              <p class="text-slate-600 text-sm mt-1">اختر نمط الخطة وافتراضيّات الطباعة.</p>
-
-              <div class="mt-4 space-y-3">
-                <div>
-                  <label class="text-sm font-bold text-slate-700">نوع الخطة</label>
-                  <select id="defaultTrack" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
-                    <option value="علاجي">علاجي</option>
-                    <option value="إثرائي">إثرائي</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label class="text-sm font-bold text-slate-700">إظهار نموذج الإجابة (في الاختبارات)</label>
-                  <select id="defaultAnswerKey" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
-                    <option value="hide">إخفاء</option>
-                    <option value="show">إظهار</option>
-                  </select>
-                </div>
-
-                <div class="rounded-2xl bg-indigo-50 border border-indigo-100 p-3 text-sm text-indigo-900">
-                  <div class="font-extrabold">ملاحظة</div>
-                  <div class="mt-1">نماذج الاختبارات تُنشأ بطريقة ثابتة حسب <b>رقم الأسبوع</b> حتى تحصل على نموذج جديد كل أسبوع.</div>
-                </div>
-
-                <button id="btnGoPlan" class="no-print w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-4 py-3">
-                  انتقل إلى الخطة الرسمية
-                </button>
-              </div>
-            </div>
-
-            <div class="mt-4 rounded-3xl border border-slate-200 bg-white p-4">
-              <h3 class="text-lg font-extrabold text-slate-900">التذييل</h3>
-              <p class="text-slate-600 text-sm mt-1">يظهر في أسفل كل صفحة عند الطباعة.</p>
-              <textarea id="footerText" class="mt-3 w-full min-h-[92px] rounded-2xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="مثال: إعداد: أ/فاطمة هزازي | ملتقى معلمي ومعلمات الرياضيات | الملتقى التفاعلي"></textarea>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <!-- Plan -->
-      <section id="tab-plan" class="hidden print-area bg-white border border-slate-200 rounded-3xl shadow-sm p-4 sm:p-6">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 class="text-lg font-extrabold text-slate-900">الخطة الرسمية الجاهزة للطباعة</h2>
-            <p class="text-slate-600 text-sm mt-1">أعمدة: (الأهداف/الإجراءات/المسؤول/الزمن/المؤشر/أداة القياس). يمكنك تعديل أي خلية ثم يتم الحفظ تلقائيًا.</p>
-          </div>
-          <div class="no-print flex flex-wrap gap-2">
-            <button id="btnPrintPlan" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">🖨️ طباعة الخطة</button>
-            <button id="btnResetPlan" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">↩️ استعادة الخطة الافتراضية</button>
-          </div>
-        </div>
-
-        <div class="no-print mt-4 grid sm:grid-cols-4 gap-3">
-          <div>
-            <label class="text-sm font-bold text-slate-700">نوع الخطة</label>
-            <select id="planTrack" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white"></select>
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">المجال</label>
-            <select id="planDomain" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white"></select>
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">بحث</label>
-            <input id="planSearch" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" placeholder="اكتب كلمة من الهدف أو المهارة..." />
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">هدف الإتقان</label>
-            <select id="planTarget" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
-              <option value="80">٨٠٪</option>
-              <option value="85">٨٥٪</option>
-              <option value="90">٩٠٪</option>
-              <option value="95">٩٥٪</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Cover for print -->
-        <div class="mt-6 rounded-2xl border border-slate-200 p-4">
-          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-            <div>
-              <div class="flex items-start gap-3">
-              <img class="app-logo w-14 h-14 object-contain rounded-2xl border border-slate-200 bg-white p-1" alt="شعار"/>
-              <div>
-                <div class="text-sm text-slate-600">بيانات</div>
-              <div class="text-xl font-extrabold text-slate-900">خطة نافس — رياضيات ثالث ابتدائي</div>
-              <div class="mt-1 text-sm text-slate-700" id="planMeta"></div>
-              </div>
-            </div>
-            </div>
-            <div class="text-sm text-slate-700">
-              <div><span class="text-slate-500">التاريخ:</span> <span id="todayDate" class="font-bold"></span></div>
-              <div class="mt-1"><span class="text-slate-500">نوع الخطة:</span> <span id="planMetaTrack" class="font-extrabold"></span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-4 overflow-x-auto rounded-2xl border border-slate-200">
-          <table class="w-full text-sm">
-            <thead class="bg-slate-50">
-              <tr class="text-slate-800">
-                <th class="p-3 border-b border-slate-200 text-right">المهارة</th>
-                <th class="p-3 border-b border-slate-200 text-right">الأهداف</th>
-                <th class="p-3 border-b border-slate-200 text-right">الإجراءات</th>
-                <th class="p-3 border-b border-slate-200 text-right">المسؤول</th>
-                <th class="p-3 border-b border-slate-200 text-right">الزمن</th>
-                <th class="p-3 border-b border-slate-200 text-right">المؤشر</th>
-                <th class="p-3 border-b border-slate-200 text-right">أداة القياس</th>
-              </tr>
-            </thead>
-            <tbody id="planBody"></tbody>
-          </table>
-        </div>
-
-        <div class="mt-6 text-sm text-slate-600">
-          <div class="font-extrabold text-slate-900">ملاحظات تنفيذ مختصرة</div>
-          <ul class="list-disc pr-6 mt-2 space-y-1">
-            <li>طبّق روتين ثابت: (استرجاع سريع → مثال مركز → تدريب موجّه → تطبيق مستقل → بطاقة خروج).</li>
-            <li>اجعل الاختبار الأسبوعي من (5–10) أسئلة اختيار من متعدد لكل مهارة.</li>
-            <li>حلّل الأخطاء حسب نوعها: (مفهوم/إجراء/قراءة مسألة/سهو) ثم عدّل الإجراءات.</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- Training -->
-      <section id="tab-training" class="hidden print-area bg-white border border-slate-200 rounded-3xl shadow-sm p-4 sm:p-6">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 class="text-lg font-extrabold text-slate-900">التدريب اليومي — روتين نافس</h2>
-            <p class="text-slate-600 text-sm mt-1">ينشئ لك تدريبًا جاهزًا لكل مهارة (استرجاع/موجّه/مستقل/بطاقة خروج) من بنك الأسئلة.</p>
-          </div>
-          <div class="no-print flex flex-wrap gap-2">
-            <button id="btnPrintTraining" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">🖨️ طباعة التدريب</button>
-          </div>
-        </div>
-
-        <div class="no-print mt-4 grid sm:grid-cols-4 gap-3">
-          <div class="sm:col-span-2">
-            <label class="text-sm font-bold text-slate-700">اختر المهارة</label>
-            <select id="trainingSkill" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white"></select>
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">نوع التدريب</label>
-            <select id="trainingTrack" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
-              <option value="علاجي">علاجي</option>
-              <option value="إثرائي">إثرائي</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">رقم الأسبوع</label>
-            <input id="trainingWeek" type="number" min="1" value="1" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
-          </div>
-          <div class="sm:col-span-2">
-            <label class="text-sm font-bold text-slate-700">عرض نموذج الإجابة</label>
-            <select id="trainingAnswers" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
-              <option value="hide">إخفاء</option>
-              <option value="show">إظهار</option>
-            </select>
-          </div>
-          <div class="sm:col-span-2 flex items-end gap-2">
-            <button id="btnGenerateTraining" class="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-4 py-3">
-              إنشاء التدريب
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-2xl border border-slate-200 p-4">
-          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-            <div>
-              <div class="flex items-start gap-3">
-                <img class="app-logo w-12 h-12 object-contain rounded-2xl border border-slate-200 bg-white p-1" alt="شعار"/>
-                <div>
-                  <div class="text-xl font-extrabold text-slate-900" id="trainingTitle">اختر مهارة ثم اضغط "إنشاء التدريب"</div>
-              <div class="text-sm text-slate-600 mt-1" id="trainingMeta"></div>
-                </div>
-              </div>
-            </div>
-            <div class="text-sm text-slate-700">
-              <div><span class="text-slate-500">الطالب:</span> <span id="trainingStudent" class="font-bold"></span></div>
-              <div class="mt-1"><span class="text-slate-500">التاريخ:</span> <span id="trainingDate" class="font-bold"></span></div>
-            </div>
-          </div>
-        </div>
-
-        <div id="trainingContent" class="mt-4 space-y-4"></div>
-      </section>
-
-      <!-- Quiz -->
-      <section id="tab-quiz" class="hidden print-area bg-white border border-slate-200 rounded-3xl shadow-sm p-4 sm:p-6">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 class="text-lg font-extrabold text-slate-900">اختبار أسبوعي — اختيار من متعدد</h2>
-            <p class="text-slate-600 text-sm mt-1">اختر المهارة ثم اطبع نموذجًا أسبوعيًا (يتغير حسب رقم الأسبوع).</p>
-          </div>
-          <div class="no-print flex flex-wrap gap-2">
-            <button id="btnPrintQuiz" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">🖨️ طباعة الاختبار</button>
-          </div>
-        </div>
-
-        <div class="no-print mt-4 grid sm:grid-cols-5 gap-3">
-          <div class="sm:col-span-2">
-            <label class="text-sm font-bold text-slate-700">اختر المهارة</label>
-            <select id="quizSkill" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white"></select>
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">رقم الأسبوع</label>
-            <input id="quizWeek" type="number" min="1" value="1" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">عدد الأسئلة</label>
-            <select id="quizCount" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
-              <option value="5">٥</option>
-              <option value="10" selected>١٠</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">نموذج الإجابة</label>
-            <select id="quizAnswers" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
-              <option value="hide">إخفاء</option>
-              <option value="show">إظهار</option>
-            </select>
-          </div>
-
-          <div class="sm:col-span-5">
-            <button id="btnGenerateQuiz" class="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-4 py-3">
-              إنشاء الاختبار
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-2xl border border-slate-200 p-4">
-          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-            <div>
-              <div class="text-xl font-extrabold text-slate-900" id="quizTitle">اختر مهارة ثم اضغط "إنشاء الاختبار"</div>
-              <div class="text-sm text-slate-600 mt-1" id="quizMeta"></div>
-            </div>
-            <div class="text-sm text-slate-700">
-              <div><span class="text-slate-500">اسم الطالب:</span> <span class="font-bold" id="quizStudent"></span></div>
-              <div class="mt-1"><span class="text-slate-500">التاريخ:</span> <span class="font-bold" id="quizDate"></span></div>
-            </div>
-          </div>
-        </div>
-
-        <div id="quizContent" class="mt-4"></div>
-      </section>
-
-      <!-- Bank -->
-      <section id="tab-bank" class="hidden print-area bg-white border border-slate-200 rounded-3xl shadow-sm p-4 sm:p-6">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 class="text-lg font-extrabold text-slate-900">بنك الأسئلة</h2>
-            <p class="text-slate-600 text-sm mt-1">استعراض الأسئلة لكل مهارة. يمكنك إضافة أسئلتك داخل الكود لاحقًا بسهولة.</p>
-          </div>
-          <div class="no-print flex flex-wrap gap-2">
-            <button id="btnPrintBank" class="chip px-3 py-2 rounded-xl text-sm font-bold hover:bg-white">🖨️ طباعة بنك الأسئلة</button>
-          </div>
-        </div>
-
-        <div class="no-print mt-4 grid sm:grid-cols-3 gap-3">
-          <div class="sm:col-span-2">
-            <label class="text-sm font-bold text-slate-700">اختر المهارة</label>
-            <select id="bankSkill" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 bg-white"></select>
-          </div>
-          <div>
-            <label class="text-sm font-bold text-slate-700">بحث داخل الأسئلة</label>
-            <input id="bankSearch" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" placeholder="مثال: تقريب / محيط / 10×10" />
-          </div>
-        </div>
-
-        <div id="bankContent" class="mt-6"></div>
-      </section>
-    </main>
-
-    <footer class="mt-6 text-center text-xs text-slate-500">
-      <div id="footerPreview"></div>
-    </footer>
-  </div>
-
-<script>
-/* =========================
-   البيانات الأساسية (المهارات + الخطة + بنك الأسئلة)
-   ========================= */
-
-const SKILLS = [
-  { id:"numbers4", domain:"المجال 1: الأعداد والعمليات", title:"الأعداد ضمن أربع منازل (قيمة منزلية/قراءة/كتابة/مقارنة/ترتيب/تقريب)" },
-  { id:"counting", domain:"المجال 1: الأعداد والعمليات", title:"العد ضمن أربع منازل (تصاعدي/تنازلي/قفزي) + زوجي/فردي" },
-  { id:"fractions", domain:"المجال 1: الأعداد والعمليات", title:"كسور الوحدة ومضاعفاتها (تمثيل/قراءة/كتابة/مقارنة/ترتيب)" },
-  { id:"addsub", domain:"المجال 1: الأعداد والعمليات", title:"جمع وطرح ضمن ثلاث منازل (مع/بدون إعادة التجميع) + مسائل لفظية" },
-  { id:"muldiv", domain:"المجال 1: الأعداد والعمليات", title:"الضرب والقسمة حتى 10×10 (حقائق/تمثيل/مسائل)" },
-  { id:"relations", domain:"المجال 2: الجبر والتحليل", title:"العلاقات بين العمليات الأربع وكتابة الجمل العددية" },
-  { id:"estimation", domain:"المجال 1: الأعداد والعمليات", title:"التقدير والحساب الذهني ومعقولية الناتج" },
-  { id:"patterns", domain:"المجال 2: الجبر والتحليل", title:"الأنماط (عددية/غير عددية/هندسية) وتوسيعها" },
-  { id:"properties", domain:"المجال 2: الجبر والتحليل", title:"خصائص العمليات (الصفر/الواحد/الإبدال/التجميع/التوزيع المبسط)" },
-  { id:"geometry", domain:"المجال 3: الهندسة والقياس", title:"الأشكال ثنائية وثلاثية الأبعاد + التماثل" },
-  { id:"perimeter_area", domain:"المجال 3: الهندسة والقياس", title:"المحيط والمساحة (شبكة مربعات)" },
-  { id:"measurements", domain:"المجال 3: الهندسة والقياس", title:"الطول/الكتلة/السعة (تقدير/قياس/مقارنة/ترتيب/وحدات)" },
-  { id:"money_time", domain:"المجال 3: الهندسة والقياس", title:"النقود حتى 9999 + الوقت (قراءة/كتابة/تقدير مدد)" },
-  { id:"stats", domain:"المجال 4: الإحصاء", title:"جمع البيانات وتمثيلها (أعمدة/رموز/نقاط) وقراءتها" },
-];
-
-const PLAN_TEMPLATES = {
-  numbers4: {
-    objective: "يميز القيمة المنزلية لرقم في عدد ضمن أربع منازل، ويمثل الأعداد ويقرأها ويكتبها ويقارن بينها ويرتبها ويقربها (10/100/1000).",
-    time: "أسبوع (3 حصص + تدريب منزلي)",
-    responsible: "المعلم + الطالب",
-    tool: "اختبار قصير (5–10 MCQ) + بطاقة خروج + ملاحظة أداء",
-    proceduresTreat: "تشخيص قبلي (5 أسئلة).\nنمذجة محسوس/تمثيل/رمزي.\nتدريب متدرج على: قراءة/تحليل/مقارنة/تقريب.\nعلاج أخطاء القيمة المنزلية.\nتقويم ختامي أسبوعي.",
-    proceduresEnrich: "تحديات قراءة/تحليل بصيغ متعددة.\nمسائل مقارنة وترتيب مع تبرير.\nتقريب في سياق حياتي (تقدير/معقولية).\nسؤال نافس أعلى + تفسير."
-  },
-  counting: {
-    objective: "يعد ضمن أربع منازل (تصاعدي/تنازلي/قفزي 2،5،10،100،1000) ويستخدم العد بالاثنين لتحديد الزوجي والفردي.",
-    time: "3 حصص قصيرة داخل الأسبوع",
-    responsible: "المعلم + الطالب",
-    tool: "بطاقة خروج + نشاط شفهي + اختبار قصير",
-    proceduresTreat: "تدريب شفهي يومي (دقيقة واحدة).\nأشرطة أعداد/بطاقات عد قفزي.\nتثبيت الزوجي/الفردي عبر نمط الآحاد.\nتقويم سريع يومي (سؤال واحد).",
-    proceduresEnrich: "تحديات عد قفزي عكسي.\nمسائل تطبيقية (الزمن/النقود) تعتمد العد.\nتوليد أنماط عددية من العد القفزي."
-  },
-  fractions: {
-    objective: "يصف كسور الوحدة ومضاعفاتها كأجزاء من الكل/مجموعة، ويقرأها ويكتبها ويمثلها على خط الأعداد ويقارن ويرتب الكسور ذات نفس البسط أو المقام.",
-    time: "أسبوع (3 حصص + ورقة عمل)",
-    responsible: "المعلم + الطالب",
-    tool: "ورقة عمل + اختبار MCQ + ملاحظة نماذج",
-    proceduresTreat: "تمثيل بشرائط/دوائر كسور.\nربط (كسور الوحدة → مضاعفاتها).\nتمثيل على خط الأعداد.\nمقارنة (نفس المقام/نفس البسط) بالنماذج.\nاختبار أسبوعي.",
-    proceduresEnrich: "تحديات مقارنة وترتيب 3 كسور.\nمسائل لفظية على الكسور في سياق.\nتبرير: لماذا هذا الكسر أكبر؟"
-  },
-  addsub: {
-    objective: "يجمع ويطرح أعدادًا ضمن ثلاث منازل (مع/بدون إعادة التجميع) ويحل مسائل من خطوة أو خطوتين على الجمع والطرح ويفسر الحل.",
-    time: "أسبوع (4 حصص)",
-    responsible: "المعلم + الطالب",
-    tool: "اختبار أسبوعي + تحقق ذاتي + بطاقة خروج",
-    proceduresTreat: "تثبيت القيمة المنزلية في الخوارزمية.\nتدريب على إعادة التجميع بخطوات واضحة.\nسؤالان موجهان + 5 مستقل.\nمسائل لفظية (اختيار العملية) + تفسير.\nتقويم أسبوعي.",
-    proceduresEnrich: "استراتيجيات ذهنية (تفكيك/تعويض).\nمسائل لفظية مركبة (خطوتان).\nتفسير استراتيجيتك كتابيًا."
-  },
-  muldiv: {
-    objective: "يصف عمليتي الضرب والقسمة ويمثلهما ويكوّن حقائقهما حتى 10×10، ويستخدم الحقائق المرتبطة لإيجاد نواتج القسمة والتحقق.",
-    time: "أسبوع (4 حصص + تدريب منزلي)",
-    responsible: "المعلم + الطالب + ولي الأمر",
-    tool: "اختبار حقائق (زمني) + MCQ + نشاط تمثيل",
-    proceduresTreat: "تمثيل بالمصفوفات/مجموعات متساوية.\nتثبيت حقائق الضرب ثم حقائق القسمة المرتبطة.\nتدريب يومي سريع (3 دقائق).\nمسائل لفظية.\nاختبار أسبوعي.",
-    proceduresEnrich: "استراتيجيات: التوزيع/المضاعفات.\nمسائل نافس أعلى (اختيار من متعدد).\nتحدي سرعة + دقة مع تفسير."
-  },
-  relations: {
-    objective: "يميز العلاقات بين العمليات الأربع ويستخدمها للتحقق من النواتج ويكتب جملًا عددية على العمليات الأربع ويحلها.",
-    time: "حصتان + تطبيقات أسبوعية",
-    responsible: "المعلم + الطالب",
-    tool: "سؤال تفسير + اختبار MCQ",
-    proceduresTreat: "ربط (جمع↔طرح) و(ضرب↔قسمة).\nالتحقق من الناتج بعكس العملية.\nتحويل الجمع المتكرر إلى ضرب.\nتقويم: سؤال تحقق واحد يوميًا.",
-    proceduresEnrich: "مسائل تحقق متعددة الطرق.\nكتابة جمل عددية من سياق حياتي.\nتبرير اختيار العملية."
-  },
-  estimation: {
-    objective: "يقدر نواتج الجمع والطرح ضمن ثلاث منازل باستخدام التقريب أو الأعداد المتناغمة، ويستخدم التجميع للحساب الذهني في الضرب، ويتحقق من معقولية النواتج.",
-    time: "حصتان + نشاط يومي (دقيقة)",
-    responsible: "المعلم + الطالب",
-    tool: "بطاقة خروج + اختبار MCQ",
-    proceduresTreat: "التقريب لأقرب عشرة/مئة.\nالأعداد المتناغمة (199≈200).\nمعقولية الناتج قبل/بعد الحل.\nتطبيقات قصيرة.\nاختبار أسبوعي.",
-    proceduresEnrich: "تحديات تقدير متعددة (أقرب).\nتبرير: لماذا هذا التقدير مناسب؟\nحساب ذهني بثلاثة عوامل."
-  },
-  patterns: {
-    objective: "يصف أنماطًا غير عددية وفق خصائص (لون/حجم/شكل/اتجاه) وأنماطًا عددية وهندسية متنامية وفق عملية واحدة ويُوسّعها ويكمل الناقص.",
-    time: "حصتان",
-    responsible: "المعلم + الطالب",
-    tool: "نشاط نمط + اختبار MCQ",
-    proceduresTreat: "عرض نمط → استنتاج القاعدة لفظيًا.\nتوسيع النمط 3 خطوات.\nإكمال عناصر مفقودة.\nتقويم سريع.",
-    proceduresEnrich: "تحديات: أكثر من قاعدة.\nابتكار نمط وشرحه.\nنمط هندسي متنامٍ مع تفسير."
-  },
-  properties: {
-    objective: "يميز خصائص العمليات (مع الصفر/الواحد) وخاصية الإبدال والتجميع ويستخدمها لإيجاد النواتج وكتابة حقائق.",
-    time: "حصتان + دمج داخل الدروس",
-    responsible: "المعلم + الطالب",
-    tool: "بطاقة خروج + MCQ",
-    proceduresTreat: "تثبيت الصفر والواحد.\nأمثلة على الإبدال (جمع/ضرب).\nأمثلة على التجميع للحساب الذهني.\nتقويم أسبوعي.",
-    proceduresEnrich: "تحديات ذهنية تستخدم التجميع.\nتطبيق مبسط للتوزيع (تفكيك عدد).\nتبرير الاستراتيجية."
-  },
-  geometry: {
-    objective: "يميز ويصنف الأشكال ثنائية وثلاثية الأبعاد ويقارن بينها وفق الخصائص، ويصف التماثل ويحدد خط تماثل ويرسمه، ويكوّن أشكالًا جديدة.",
-    time: "أسبوع (3 حصص)",
-    responsible: "المعلم + الطالب",
-    tool: "نشاط فرز + MCQ + مهمة رسم",
-    proceduresTreat: "بطاقات فرز خصائص.\nتعريف الخصائص (أضلاع/رؤوس/أوجه).\nتماثل: تحديد خط واحد.\nتقويم قصير.",
-    proceduresEnrich: "تحديات تصنيف مركبة.\nاكتشاف أكثر من خط تماثل.\nبناء مجسمات ومقارنة خصائص."
-  },
-  perimeter_area: {
-    objective: "يصف المحيط ويقيس محيط مضلع باستخدام شبكة المربعات ووحدات الطول، ويصف المساحة ويجد/يقدر مساحة شكل باستخدام شبكة المربعات.",
-    time: "حصتان + تطبيق",
-    responsible: "المعلم + الطالب",
-    tool: "ورقة شبكة + MCQ",
-    proceduresTreat: "نشاط شبكة: عدّ وحدات المحيط.\nالتمييز بين محيط ومساحة.\nمساحة: عدّ المربعات.\nاختبار أسبوعي.",
-    proceduresEnrich: "مسائل شبكة أكبر.\nتفسير الفرق بين المفهومين.\nتحدي: نفس المحيط ومساحات مختلفة."
-  },
-  measurements: {
-    objective: "يصف الأطوال ويقدرها ويقارن ويرتب ويختار وحدات القياس المناسبة (ملم/سم/م/كم)، ويقدر الكتل (جم/كجم) والسعات (مل/لتر) ويقارن ويرتب.",
-    time: "أسبوع (3 حصص)",
-    responsible: "المعلم + الطالب",
-    tool: "ملاحظة عملية + MCQ",
-    proceduresTreat: "تمييز الوحدة المناسبة.\nتقدير ثم قياس.\nمقارنة وترتيب قيم.\nتطبيقات حياتية.\nاختبار أسبوعي.",
-    proceduresEnrich: "مشكلات تحويل بسيطة (سم↔م).\nتحديات ترتيب مع تبرير.\nتصميم سؤال قياس من الواقع."
-  },
-  money_time: {
-    objective: "يميز فئات النقود ويعد ويمثل ويقارن مبالغ حتى 9999 ريال ويحل مسائل مالية، ويختار وحدات الزمن المناسبة ويقرأ الوقت ويكتبه ويقدر أطوال المدد ويحسبها.",
-    time: "أسبوع (4 حصص)",
-    responsible: "المعلم + الطالب",
-    tool: "مهمة تطبيقية + MCQ",
-    proceduresTreat: "تمثيل مبالغ بطرق متعددة.\nمسائل جمع/طرح بالنقود.\nقراءة الساعة (كاملة/نصف/ربع/أقرب 5 دقائق).\nحساب مدة بين حدثين.\nاختبار أسبوعي.",
-    proceduresEnrich: "ميزانية مصغرة.\nمسائل زمن مركبة.\nتبرير اختيار الوحدة الزمنية."
-  },
-  stats: {
-    objective: "يجمع بيانات من البيئة وينظمها في فئات باستخدام جداول تكرارية، ويمثلها بالأعمدة والرسم بالرموز والنقاط، ويقرأ التمثيلات ويفسرها.",
-    time: "حصتان + مشروع صفّي",
-    responsible: "المعلم + الطالب",
-    tool: "مشروع بيانات + MCQ",
-    proceduresTreat: "جمع بيانات صفية.\nجدول تكراري.\nمخطط أعمدة بسيط.\nقراءة وتفسير (الأكثر/الأقل/الفرق).\nاختبار أسبوعي.",
-    proceduresEnrich: "مقارنة تمثيلين لنفس البيانات.\nأسئلة استنتاج.\nتصميم استبانة قصيرة."
-  }
-};
-
-const QUESTION_BANK = {
-  numbers4: [
-    {q:"ما قيمة الرقم 7 في العدد 3,742؟", options:["7","70","700","7000"], a:2, ex:"الرقم 7 في منزلة المئات."},
-    {q:"أي صيغة تحليلية للعدد 5,068؟", options:["5000 + 600 + 8","5000 + 60 + 8","5000 + 6 + 80","500 + 60 + 8"], a:1, ex:"5 آلاف + 6 عشرات + 8 آحاد."},
-    {q:"أي عدد أكبر؟", options:["4,132","4,312","4,231","4,213"], a:1, ex:"3 في منزلة المئات أكبر من 1 و2."},
-    {q:"رتّب تصاعديًا: 2,105 — 2,015 — 2,150 — 2,051", options:["2,015 ثم 2,051 ثم 2,105 ثم 2,150","2,051 ثم 2,015 ثم 2,105 ثم 2,150","2,150 ثم 2,105 ثم 2,051 ثم 2,015","2,105 ثم 2,015 ثم 2,051 ثم 2,150"], a:0, ex:"نقارن الآلاف ثم المئات ثم العشرات ثم الآحاد."},
-    {q:"قرّب 3,478 لأقرب مئة.", options:["3,400","3,450","3,500","3,600"], a:2, ex:"78 ≥ 50 إذن إلى 3,500."},
-    {q:"قرّب 6,149 لأقرب ألف.", options:["6,000","6,100","7,000","5,000"], a:0, ex:"149 أقل من 500 إذن إلى 6,000."},
-    {q:"أي وصف يمثل العدد 1,234؟", options:["1 مئة و2 عشرات و3 آحاد و4 آلاف","1 ألف و2 مئة و3 عشرة و4 آحاد","1 ألف و2 عشرة و3 مئة و4 آحاد","1 ألف و2 مئة و3 آحاد و4 عشرات"], a:1, ex:"منزلة الآلاف ثم المئات ثم العشرات ثم الآحاد."},
-    {q:"العدد الذي يطابق (أربعة آلاف وثلاثمئة وستة) هو:", options:["4,036","4,306","4,360","4,003"], a:1, ex:"4 آلاف + 3 مئة + 6 آحاد."},
-  ],
-  counting: [
-    {q:"أكمل العد القفزي بالخمسات: 35، 40، 45، ____", options:["46","50","55","60"], a:1, ex:"نضيف 5 كل مرة."},
-    {q:"هل العدد 68 زوجي أم فردي؟", options:["زوجي","فردي","لا يمكن","ليس عددًا"], a:0, ex:"الآحاد 8 ⇒ زوجي."},
-    {q:"أكمل العد بالعشرات: 120، 130، 140، ____", options:["141","145","150","160"], a:2, ex:"نضيف 10."},
-    {q:"أكمل العد بالمئات: 900، 1000، 1100، ____", options:["1110","1200","2000","1010"], a:1, ex:"نضيف 100."},
-    {q:"أي عدد يقبل القسمة على 2؟", options:["37","41","58","63"], a:2, ex:"الآحاد زوجي ⇒ يقبل القسمة على 2."},
-    {q:"أكمل العد بالألوف: 2000، 3000، 4000، ____", options:["4500","5000","6000","4100"], a:1, ex:"نضيف 1000."},
-  ],
-  fractions: [
-    {q:"أي كسر يمثل جزءًا واحدًا من 4 أجزاء متساوية؟", options:["1/2","1/3","1/4","4/1"], a:2, ex:"كسور الوحدة يكون البسط 1."},
-    {q:"الكسر الذي يمثل 3 أجزاء من 8 هو:", options:["8/3","3/8","1/8","3/4"], a:1, ex:"البسط عدد الأجزاء المأخوذة."},
-    {q:"أي أكبر؟", options:["1/6","1/4","متساويان","لا يمكن"], a:1, ex:"كلما صغر المقام كبر كسر الوحدة."},
-    {q:"قارن: 3/8 ____ 5/8", options:[">","<","=","لا شيء"], a:1, ex:"نفس المقام: نقارن البسطين."},
-    {q:"قارن: 2/7 ____ 2/5", options:[">","<","=","لا شيء"], a:1, ex:"نفس البسط: الأصغر مقامًا هو الأكبر قيمة."},
-    {q:"رتّب تصاعديًا: 1/2 ، 1/3 ، 1/6", options:["1/2 ثم 1/3 ثم 1/6","1/6 ثم 1/3 ثم 1/2","1/3 ثم 1/6 ثم 1/2","1/6 ثم 1/2 ثم 1/3"], a:1, ex:"في كسور الوحدة: الأكبر مقامًا أصغر قيمة."},
-    {q:"أي كسر يساوي مضاعف (2 × 1/5)؟", options:["1/10","2/5","3/5","1/5"], a:1, ex:"2 × 1/5 = 2/5."},
-    {q:"قارن: 4/9 ____ 4/7", options:[">","<","=","لا شيء"], a:1, ex:"نفس البسط: الأصغر مقامًا أكبر."},
-  ],
-  addsub: [
-    {q:"ناتج 348 + 125 = ?", options:["463","473","483","493"], a:1, ex:"348+100=448 ثم +25=473."},
-    {q:"ناتج 602 + 198 = ?", options:["700","790","800","810"], a:2, ex:"602+200=802 ثم -2=800."},
-    {q:"ناتج 740 - 265 = ?", options:["475","485","505","515"], a:0, ex:"740-200=540 ثم -60=480 ثم -5=475."},
-    {q:"ناتج 500 - 178 = ?", options:["322","332","312","328"], a:0, ex:"500-180=320 ثم +2=322."},
-    {q:"مع خالد 235 ريالًا واشترى بـ79 ريالًا. كم بقي؟", options:["146","156","164","166"], a:1, ex:"235-79=156."},
-    {q:"في مكتبة 168 كتابًا أضيف 247 كتابًا. كم المجموع؟", options:["405","415","425","435"], a:1, ex:"168+247=415."},
-    {q:"ناتج 623 - 405 = ?", options:["208","218","228","238"], a:1, ex:"623-400=223 ثم -5=218."},
-    {q:"أي عملية مناسبة لمسألة: (كان عنده 320 ثم أصبح 485)؟", options:["جمع","طرح","ضرب","قسمة"], a:0, ex:"نبحث عن الزيادة: 320 + ؟ = 485."},
-  ],
-  muldiv: [
-    {q:"ناتج 7 × 6 = ?", options:["36","40","42","48"], a:2, ex:"7×6=42."},
-    {q:"ناتج 9 × 8 = ?", options:["64","72","81","90"], a:1, ex:"9×8=72."},
-    {q:"ناتج 56 ÷ 7 = ?", options:["6","7","8","9"], a:2, ex:"56=7×8."},
-    {q:"ناتج 48 ÷ 6 = ?", options:["6","7","8","9"], a:2, ex:"48=6×8."},
-    {q:"إذا كان 6 × 5 = 30 إذن 30 ÷ 5 = ?", options:["5","6","7","8"], a:1, ex:"العملية العكسية للضرب."},
-    {q:"يمثل: 4 مجموعات في كل مجموعة 3. الجملة الضربية:", options:["4+3=7","4×3=12","4÷3=1","3-4=-1"], a:1, ex:"مجموعات متساوية ⇒ ضرب."},
-    {q:"ناتج 8 × 0 = ?", options:["0","8","1","لا يمكن"], a:0, ex:"أي عدد × 0 = 0."},
-    {q:"ناتج 0 ÷ 5 = ?", options:["0","5","1","لا يمكن"], a:0, ex:"صفر مقسوم على عدد ≠0 يساوي 0."},
-    {q:"24 قطعة وُزعت بالتساوي على 6 أطفال. لكل طفل:", options:["3","4","5","6"], a:1, ex:"24÷6=4."},
-    {q:"أي جملة قسمة مرتبطة بـ 8×3=24؟", options:["24÷3=8","24÷8=4","24÷6=4","24÷8=5"], a:0, ex:"24÷3=8 أو 24÷8=3."},
-  ],
-  relations: [
-    {q:"للتحقق من صحة 7×4=28 اختر الجملة المناسبة:", options:["28+7=35","28÷7=4","28-4=24","7÷28=4"], a:1, ex:"التحقق يكون بعكس العملية."},
-    {q:"الجملة الضربية المكافئة لـ 5+5+5+5 هي:", options:["5×5=25","4×5=20","5×4=9","4+5=9"], a:1, ex:"جمع متكرر ⇒ ضرب."},
-    {q:"24÷6 يمكن إيجاده بالطرح المتكرر. كم مرة نطرح 6 من 24 حتى نصل إلى 0؟", options:["2","3","4","6"], a:2, ex:"24→18→12→6→0 (4 مرات)."},
-    {q:"أي جملة عددية تمثل: 3 أكياس في كل كيس 9 كرات؟", options:["3+9=12","3×9=27","9-3=6","27÷9=1"], a:1, ex:"مجموعات متساوية ⇒ ضرب."},
-    {q:"إذا كان 8×3=24 فأي عبارة صحيحة؟", options:["24÷8=3","24÷3=6","8÷24=3","24-8=3"], a:0, ex:"القسمة عكس الضرب."},
-    {q:"اختر الجملة العددية الصحيحة لمسألة: بقي 18 من 45", options:["45-18=27","45+18=63","45×18","45÷18"], a:0, ex:"بقي ⇒ طرح."},
-  ],
-  estimation: [
-    {q:"قدّر 398 + 205 لأقرب مئة.", options:["500","600","700","800"], a:1, ex:"400+200=600."},
-    {q:"قدّر 742 - 198 لأقرب مئة.", options:["400","500","600","700"], a:1, ex:"700-200=500."},
-    {q:"باستخدام الأعداد المتناغمة: 199 + 302 ≈", options:["400","450","500","550"], a:2, ex:"200+300=500."},
-    {q:"أي تقدير أقرب لـ 486 + 311 ؟", options:["700","800","900","1000"], a:1, ex:"≈ 500+300=800."},
-    {q:"احسب ذهنيًا: 2×5×4 = ?", options:["20","30","40","50"], a:2, ex:"(2×5)=10 ثم 10×4=40."},
-    {q:"هل 297 + 312 = 609 ناتج معقول؟", options:["نعم","لا","لا يمكن","أحيانًا"], a:0, ex:"300+300≈600 قريب من 609."},
-    {q:"قدّر 650 - 298 باستخدام التقريب.", options:["200","300","400","500"], a:1, ex:"650-300≈350 أقرب لـ 300 من 400 في الخيارات؟ (الأقرب 300/400، نختار 300 كتقدير أقل)."},
-    {q:"اختر ناتجًا تقريبيًا لـ 512 + 389.", options:["800","900","1000","1100"], a:1, ex:"≈ 500+400=900."},
-  ],
-  patterns: [
-    {q:"أكمل النمط: 4، 8، 12، 16، ____", options:["18","20","22","24"], a:1, ex:"القاعدة: +4."},
-    {q:"أكمل النمط: 30، 27، 24، 21، ____", options:["19","18","17","16"], a:1, ex:"القاعدة: -3."},
-    {q:"أكمل النمط: 2، 4، 8، 16، ____", options:["18","24","32","34"], a:2, ex:"القاعدة: ×2."},
-    {q:"قاعدة النمط: 5، 10، 15، 20 هي:", options:["+3","+5","-5","×2"], a:1, ex:"نضيف 5."},
-    {q:"نمط غير عددي: كبير، صغير، كبير، صغير، ____", options:["كبير","صغير","أطول","أقصر"], a:1, ex:"يتكرر (كبير/صغير)."},
-    {q:"لون: أحمر، أزرق، أحمر، أزرق، ____", options:["أخضر","أصفر","أحمر","أسود"], a:2, ex:"يتكرر (أحمر/أزرق)."},
-    {q:"أكمل النمط: 100، 200، 300، ____", options:["350","400","500","600"], a:1, ex:"القاعدة: +100."},
-    {q:"أي عدد مفقود؟ 9، 12، __، 18 (قاعدة +3)", options:["14","15","16","17"], a:1, ex:"9+3=12 ثم 15 ثم 18."},
-  ],
-  properties: [
-    {q:"ناتج 345 + 0 = ?", options:["0","345","35","340"], a:1, ex:"إضافة الصفر لا تغير العدد."},
-    {q:"ناتج 0 × 9 = ?", options:["0","9","1","لا يمكن"], a:0, ex:"الضرب في الصفر يساوي 0."},
-    {q:"ناتج 7 × 1 = ?", options:["1","7","8","0"], a:1, ex:"الضرب في 1 لا يغير العدد."},
-    {q:"ناتج 24 ÷ 1 = ?", options:["1","0","24","12"], a:2, ex:"القسمة على 1 لا تغير العدد."},
-    {q:"أي جملة تمثل خاصية الإبدال في الجمع؟", options:["8+5=5+8","8+5=13+0","8+5=8+6","8+5=8×5"], a:0, ex:"نبدّل ترتيب الحدّين."},
-    {q:"أي جملة تمثل خاصية الإبدال في الضرب؟", options:["4×7=7×4","4×7=28+0","4×7=4×8","7×4=7+4"], a:0, ex:"نبدّل ترتيب العاملين."},
-    {q:"باستخدام التجميع: 3×(4×5)=؟", options:["12","15","60","75"], a:2, ex:"(4×5)=20 ثم 3×20=60."},
-    {q:"تفكيك مبسط: 6×12 يساوي:", options:["6×10 + 6×2","6×10 - 6×2","(6+12)×2","6+12+2"], a:0, ex:"توزيع مبسط عبر التفكيك."},
-  ],
-  geometry: [
-    {q:"أي شكل له 3 أضلاع؟", options:["مربع","مثلث","دائرة","مستطيل"], a:1, ex:"المثلث له 3 أضلاع."},
-    {q:"أي شكل له 4 أضلاع متساوية؟", options:["مستطيل","مربع","مثلث","دائرة"], a:1, ex:"المربع أضلاعه متساوية."},
-    {q:"كم رأسًا للمستطيل؟", options:["3","4","5","6"], a:1, ex:"للمستطيل 4 رؤوس."},
-    {q:"أي مجسم له 6 أوجه مربعة؟", options:["كرة","مكعب","مخروط","أسطوانة"], a:1, ex:"المكعب."},
-    {q:"أي مجسم له وجه دائري واحد وقمة واحدة؟", options:["أسطوانة","مخروط","كرة","مكعب"], a:1, ex:"المخروط."},
-    {q:"عدد خطوط التماثل للمربع هو:", options:["1","2","3","4"], a:3, ex:"أفقي ورأسي وقطران."},
-    {q:"أي شكل ثنائي الأبعاد ليس له أضلاع؟", options:["دائرة","مربع","مثلث","مستطيل"], a:0, ex:"الدائرة."},
-    {q:"أي مجسم له وجهان دائريان وسطح منحني؟", options:["أسطوانة","مخروط","كرة","هرم"], a:0, ex:"الأسطوانة."},
-  ],
-  perimeter_area: [
-    {q:"محيط مربع طول ضلعه 5 سم يساوي:", options:["10","15","20","25"], a:2, ex:"4×5=20."},
-    {q:"محيط مستطيل طوله 8 سم وعرضه 3 سم يساوي:", options:["11","16","22","24"], a:2, ex:"2×(8+3)=22."},
-    {q:"مساحة مستطيل على شبكة 3×4 مربعات تساوي:", options:["7","10","12","14"], a:2, ex:"3×4=12 مربعًا."},
-    {q:"مساحة مربع 4×4 مربعات تساوي:", options:["8","12","16","20"], a:2, ex:"4×4=16."},
-    {q:"أي عبارة صحيحة؟", options:["المحيط يقيس داخل الشكل","المساحة تقيس طول الأضلاع","المساحة تقيس داخل الشكل","المحيط يساوي عدد المربعات"], a:2, ex:"المساحة = داخل الشكل."},
-    {q:"إذا كان محيط شكل على شبكة = 14 وحدة، فهذا يعني:", options:["عدّ المربعات داخل الشكل =14","مجموع أطوال الأضلاع =14","عدد الأضلاع =14","المساحة=14"], a:1, ex:"المحيط = مجموع أطوال الأضلاع."},
-  ],
-  measurements: [
-    {q:"وحدة مناسبة لطول قلم هي:", options:["كم","م","سم","لتر"], a:2, ex:"الأطوال الصغيرة بالسنتيمتر."},
-    {q:"وحدة مناسبة لمسافة بين مدينتين هي:", options:["ملم","سم","م","كم"], a:3, ex:"المسافات الكبيرة بالكيلومتر."},
-    {q:"وحدة مناسبة لكتلة برتقالة هي:", options:["جرام","كجم","لتر","سم"], a:0, ex:"الكتل الصغيرة بالجرام."},
-    {q:"وحدة مناسبة لكتلة طفل هي:", options:["جرام","كجم","مل","سم"], a:1, ex:"كتلة الأشخاص بالكيلوجرام."},
-    {q:"وحدة مناسبة لسعة زجاجة ماء هي:", options:["مل","لتر","جرام","كم"], a:1, ex:"السعات الكبيرة باللتر."},
-    {q:"وحدة مناسبة لسعة ملعقة دواء هي:", options:["لتر","مل","كجم","م"], a:1, ex:"السعات الصغيرة بالملليلتر."},
-    {q:"رتّب تصاعديًا: 80 سم، 150 سم، 2 م", options:["2 م ثم 150 سم ثم 80 سم","80 سم ثم 150 سم ثم 2 م","150 سم ثم 80 سم ثم 2 م","80 سم ثم 2 م ثم 150 سم"], a:1, ex:"2 م = 200 سم."},
-    {q:"أي أكبر؟", options:["750 مل","1 لتر","500 مل","250 مل"], a:1, ex:"1 لتر = 1000 مل."},
-  ],
-  money_time: [
-    {q:"أي فئة ورقية تساوي 50 ريالًا؟", options:["5","10","20","50"], a:3, ex:"ورقة 50 ريال."},
-    {q:"3 عملات من فئة 2 ريال و 1 عملة من فئة 5 ريال تساوي:", options:["9","10","11","12"], a:2, ex:"2+2+2+5=11."},
-    {q:"معك 100 ريال واشتريت بـ 68 ريال. الباقي:", options:["22","32","38","42"], a:1, ex:"100-68=32."},
-    {q:"أي تمثيل يساوي 37 ريالًا؟", options:["20+10+5+2","20+10+2+2","10+10+10+5","50-10-2"], a:0, ex:"20+10+5+2=37."},
-    {q:"الوقت 3:30 يُقرأ:", options:["الثالثة إلا ربع","الثالثة والربع","الثالثة والنصف","الثالثة إلا خمس"], a:2, ex:"30 دقيقة = نصف ساعة."},
-    {q:"الوقت 7:15 يُقرأ:", options:["السابعة والربع","السابعة والنصف","الثامنة إلا ربع","السابعة إلا ربع"], a:0, ex:"15 دقيقة = ربع ساعة."},
-    {q:"وحدة زمن مناسبة لقياس مدة حصة دراسية:", options:["ثانية","دقيقة","ساعة","يوم"], a:1, ex:"الحصة تقاس بالدقائق."},
-    {q:"بدأ نشاط 5:10 وانتهى 5:45. المدة:", options:["25 دقيقة","30 دقيقة","35 دقيقة","40 دقيقة"], a:2, ex:"من 10 إلى 45 = 35 دقيقة."},
-    {q:"أي أقرب لقراءة (9:45) بالكلمات؟", options:["العاشرة إلا ربع","التاسعة والنصف","التاسعة والربع","العاشرة والربع"], a:0, ex:"45 دقيقة = إلا ربع."},
-    {q:"اختر: 9999 ريال يعني ضمن", options:["ألوف فقط","مئات فقط","أربعة منازل","منزلتان"], a:2, ex:"9999 عدد من أربع منازل."},
-  ],
-  stats: [
-    {q:"في الجدول التكراري، التكرار يعني:", options:["اسم الفئة","عدد مرات حدوث الفئة","لون الفئة","زمن الفئة"], a:1, ex:"التكرار يساوي عدد المرات."},
-    {q:"في مخطط الأعمدة، العمود الأطول يدل على:", options:["أقل تكرار","أكبر تكرار","لا شيء","خطأ"], a:1, ex:"الأطول = الأكثر."},
-    {q:"إذا كان التفاح 8 والموز 5 فالفرق يساوي:", options:["2","3","13","40"], a:1, ex:"8-5=3."},
-    {q:"أداة مناسبة لتمثيل بيانات فئات قليلة هي:", options:["مخطط أعمدة","معادلة","مستقيم","مثلث"], a:0, ex:"المخطط يناسب الفئات."},
-    {q:"جمع البيانات من الصف ثم تنظيمها في فئات يسمى:", options:["تقدير","تصنيف وتنظيم بيانات","ضرب","تماثل"], a:1, ex:"تنظيم البيانات في فئات."},
-    {q:"إذا كانت فئة (أ) تكرارها 6 وفئة (ب) تكرارها 6 فهما:", options:["متساويتان","مختلفتان","لا يمكن","أكبر"], a:0, ex:"نفس التكرار."},
-    {q:"قراءة المخطط تعني:", options:["رسمه فقط","استخراج معلومات منه","تلوينه","قصه"], a:1, ex:"نستنتج أكثر/أقل/فرق."},
-    {q:"أي سؤال استنتاجي؟", options:["كم عدد طلاب التفاح؟","أي الفئات أكثر؟","ما اسم الفئة؟","ما لون العمود؟"], a:1, ex:"استنتاج: الأكثر."},
-  ]
-};
-
-// إذا احتجت أسئلة أكثر لكل مهارة: أضف عناصر جديدة داخل QUESTION_BANK بنفس التنسيق.
-
-// =========================
-// رسومات توضيحية (تظهر تلقائياً داخل الأسئلة)
-// =========================
-const ILLUSTRATIONS = {
-  numbers4: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">خريطة القيمة المنزلية</div>
-      <div class="grid grid-cols-4 gap-2 text-center text-xs font-extrabold">
-        <div class="rounded-lg border border-slate-200 bg-white py-2">آحاد</div>
-        <div class="rounded-lg border border-slate-200 bg-white py-2">عشرات</div>
-        <div class="rounded-lg border border-slate-200 bg-white py-2">مئات</div>
-        <div class="rounded-lg border border-slate-200 bg-white py-2">آلاف</div>
-      </div>
-    </div>
-  `,
-  counting: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">خط الأعداد (قفزات ثابتة)</div>
-      <svg viewBox="0 0 320 44" class="w-full h-11 text-slate-700">
-        <line x1="10" y1="24" x2="310" y2="24" stroke="currentColor" stroke-width="2" />
-        ${Array.from({length:11}).map((_,i)=>`<line x1="${10+i*30}" y1="18" x2="${10+i*30}" y2="30" stroke="currentColor" stroke-width="2"/>`).join("")}
-        <path d="M270 10 L310 24 L270 38" fill="none" stroke="currentColor" stroke-width="2"/>
-      </svg>
-    </div>
-  `,
-  fractions: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">تمثيل كسر (أجزاء متساوية)</div>
-      <div class="grid grid-cols-4 gap-1">
-        <div class="h-7 rounded bg-indigo-200"></div>
-        <div class="h-7 rounded bg-indigo-200"></div>
-        <div class="h-7 rounded bg-indigo-200"></div>
-        <div class="h-7 rounded bg-white border border-slate-300"></div>
-      </div>
-    </div>
-  `,
-  addsub: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">مخطط (أجزاء-كل) للجمع/الطرح</div>
-      <div class="grid grid-cols-3 gap-2 text-center text-xs font-extrabold">
-        <div class="rounded-lg border border-slate-200 bg-white py-2">جزء</div>
-        <div class="rounded-lg border border-slate-200 bg-white py-2">جزء</div>
-        <div class="rounded-lg border border-slate-200 bg-white py-2">الكل</div>
-      </div>
-    </div>
-  `,
-  muldiv: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">مصفوفة (صفوف × أعمدة)</div>
-      <div class="grid grid-cols-6 gap-1">
-        ${Array.from({length:24}).map(()=>`<div class="h-3 rounded bg-emerald-200"></div>`).join("")}
-      </div>
-    </div>
-  `,
-  relations: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">عائلة الحقائق (ضرب/قسمة)</div>
-      <svg viewBox="0 0 220 130" class="w-full h-24">
-        <path d="M110 10 L20 110 L200 110 Z" fill="rgba(99,102,241,0.12)" stroke="rgba(99,102,241,0.55)" stroke-width="2"/>
-        <circle cx="110" cy="25" r="10" fill="rgba(16,185,129,0.35)"/>
-        <circle cx="40" cy="110" r="10" fill="rgba(16,185,129,0.35)"/>
-        <circle cx="180" cy="110" r="10" fill="rgba(16,185,129,0.35)"/>
-      </svg>
-    </div>
-  `,
-  estimation: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">تقريب (قبل/بعد)</div>
-      <div class="flex items-center justify-between text-xs font-extrabold text-slate-700">
-        <span>الأقرب للأسفل</span>
-        <span class="text-slate-400">|</span>
-        <span>الأقرب للأعلى</span>
-      </div>
-      <div class="mt-2 h-2 rounded-full bg-slate-200 relative">
-        <div class="absolute left-1/2 -translate-x-1/2 -top-2 w-2 h-6 rounded bg-indigo-400"></div>
-      </div>
-    </div>
-  `,
-  patterns: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">نمط يتكرر</div>
-      <div class="flex gap-2">
-        <div class="w-7 h-7 rounded bg-rose-200"></div>
-        <div class="w-7 h-7 rounded bg-sky-200"></div>
-        <div class="w-7 h-7 rounded bg-rose-200"></div>
-        <div class="w-7 h-7 rounded bg-sky-200"></div>
-      </div>
-    </div>
-  `,
-  properties: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">خاصية (تبديل/تجميع)</div>
-      <div class="text-xs font-bold text-slate-700">مثال: a + b = b + a</div>
-      <div class="text-xs text-slate-600 mt-1">رتّب الحدود — الناتج لا يتغير.</div>
-    </div>
-  `,
-  geometry: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">أشكال هندسية</div>
-      <div class="flex gap-3 items-end">
-        <div class="w-0 h-0 border-l-[18px] border-r-[18px] border-b-[32px] border-l-transparent border-r-transparent border-b-sky-300"></div>
-        <div class="w-8 h-8 bg-emerald-200 rounded"></div>
-        <div class="w-10 h-7 bg-amber-200 rounded-xl"></div>
-      </div>
-    </div>
-  `,
-  perimeter_area: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">محيط/مساحة</div>
-      <div class="w-full h-14 border-2 border-indigo-300 rounded-lg relative bg-white">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-bold text-slate-600">الطول</div>
-        <div class="absolute top-1/2 -translate-y-1/2 -right-6 text-[11px] font-bold text-slate-600 rotate-90">العرض</div>
-      </div>
-    </div>
-  `,
-  measurements: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">قياس (وحدات)</div>
-      <div class="h-3 rounded bg-slate-200 relative overflow-hidden">
-        ${Array.from({length:16}).map((_,i)=>`<div class="absolute top-0 bottom-0 w-[2px] bg-slate-400" style="left:${i*6.25}%"></div>`).join("")}
-      </div>
-      <div class="mt-2 text-xs text-slate-600">سم / م / كجم / لتر …</div>
-    </div>
-  `,
-  money_time: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">نقود/وقت</div>
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full border border-slate-300 bg-white flex items-center justify-center text-xs font-extrabold">﷼</div>
-        <svg viewBox="0 0 80 80" class="w-10 h-10">
-          <circle cx="40" cy="40" r="34" fill="white" stroke="rgba(100,116,139,0.7)" stroke-width="4"/>
-          <line x1="40" y1="40" x2="40" y2="22" stroke="rgba(99,102,241,0.9)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="40" y1="40" x2="56" y2="46" stroke="rgba(99,102,241,0.9)" stroke-width="4" stroke-linecap="round"/>
-        </svg>
-      </div>
-    </div>
-  `,
-  stats: `
-    <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-      <div class="text-xs text-slate-600 font-extrabold mb-2">تمثيل بياني (أعمدة)</div>
-      <div class="flex items-end gap-2 h-14">
-        <div class="w-4 h-8 rounded bg-sky-300"></div>
-        <div class="w-4 h-12 rounded bg-indigo-300"></div>
-        <div class="w-4 h-6 rounded bg-emerald-300"></div>
-        <div class="w-4 h-10 rounded bg-rose-300"></div>
-      </div>
-    </div>
-  `
-};
-
-function illustrationFor(skillId){
-  return ILLUSTRATIONS[skillId] || "";
-}
-
-
-/* =========================
-   الحالة والتخزين
-   ========================= */
-
-const STORAGE_KEY = "nafes_g3_app_v1";
-
-const DEFAULT_STATE = {
-  info: { schoolName:"", className:"", teacherName:"", termName:"", yearName:"", studentName:"" },
-  ui: { tab:"dashboard", defaultTrack:"علاجي", defaultAnswerKey:"hide", footerText:"إعداد: أ/فاطمة هزازي | ملتقى معلمي ومعلمات الرياضيات | الملتقى التفاعلي" },
-  plan: { custom: {} } // custom[track][skillId][field]
-};
-
-function safeParse(json, fallback){
-  try { return JSON.parse(json) || fallback; } catch(e){ return fallback; }
-}
-
-function loadState(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  const s = raw ? safeParse(raw, DEFAULT_STATE) : DEFAULT_STATE;
-  // Merge (لكي لا تنكسر الإصدارات)
-  return {
-    ...DEFAULT_STATE,
-    ...s,
-    info: { ...DEFAULT_STATE.info, ...(s.info||{}) },
-    ui: { ...DEFAULT_STATE.ui, ...(s.ui||{}) },
-    plan: { ...DEFAULT_STATE.plan, ...(s.plan||{}), custom: (s.plan && s.plan.custom) ? s.plan.custom : {} }
-  };
-}
-
-function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-let state = loadState();
-
-/* =========================
-   أدوات مساعدة
-   ========================= */
-
-const $ = (id) => document.getElementById(id);
-
-function todayStr(){
-  const d = new Date();
-  return d.toLocaleDateString("ar-SA-u-nu-arab", { year:"numeric", month:"long", day:"numeric" });
-}
-
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
-}
-
-const AR_DIGITS_MAP = {"0":"٠","1":"١","2":"٢","3":"٣","4":"٤","5":"٥","6":"٦","7":"٧","8":"٨","9":"٩"};
-function toArabicDigits(input){
-  return String(input).replace(/[0-9]/g, d => AR_DIGITS_MAP[d] || d);
-}
-function escDisp(s){
-  // للعرض داخل الصفحة: تحويل الأرقام + حماية HTML
-  return escapeHtml(toArabicDigits(s));
-}
-
-const LOGO_DATA_URI = "logo.png";
-function applyLogo(){
-  document.querySelectorAll(".app-logo").forEach(img=>{
-    if(!img.getAttribute("src")) img.setAttribute("src", LOGO_DATA_URI);
-  });
-}
-
-function hashSeed(str){
-  let h = 2166136261;
-  for (let i=0;i<str.length;i++){
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-function mulberry32(a){
-  return function(){
-    let t = a += 0x6D2B79F5;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function shuffle(arr, rng){
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--){
-    const j = Math.floor(rng() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function getSkillById(id){
-  return SKILLS.find(s=>s.id===id);
-}
-
-function domainsList(){
-  const set = new Set(SKILLS.map(s=>s.domain));
-  return ["الكل", ...Array.from(set)];
-}
-
-function getCustomPlan(track, skillId){
-  return (state.plan.custom?.[track]?.[skillId]) || null;
-}
-
-function setCustomPlan(track, skillId, field, value){
-  if (!state.plan.custom) state.plan.custom = {};
-  if (!state.plan.custom[track]) state.plan.custom[track] = {};
-  if (!state.plan.custom[track][skillId]) state.plan.custom[track][skillId] = {};
-  state.plan.custom[track][skillId][field] = value;
-  saveState();
-}
-
-function resetPlanCustom(){
-  state.plan.custom = {};
-  saveState();
-}
-
-/* =========================
-   بناء خطة (علاجي/إثرائي)
-   ========================= */
-
-function buildPlanRow(track, skill){
-  const tpl = PLAN_TEMPLATES[skill.id];
-  const target = Number($("planTarget")?.value || 80);
-  const indicator = track === "إثرائي"
-    ? `نسبة إتقان ≥ ${Math.max(90, target)}%`
-    : `نسبة إتقان ≥ ${target}%`;
-
-  const base = {
-    skillTitle: skill.title,
-    objective: tpl?.objective || "",
-    procedures: track === "إثرائي" ? (tpl?.proceduresEnrich || "") : (tpl?.proceduresTreat || ""),
-    responsible: tpl?.responsible || "المعلم + الطالب",
-    time: tpl?.time || "أسبوع",
-    indicator,
-    tool: tpl?.tool || "اختبار قصير + بطاقة خروج"
-  };
-
-  const custom = getCustomPlan(track, skill.id);
-  if (!custom) return base;
-
-  return {
-    ...base,
-    objective: custom.objective ?? base.objective,
-    procedures: custom.procedures ?? base.procedures,
-    responsible: custom.responsible ?? base.responsible,
-    time: custom.time ?? base.time,
-    indicator: custom.indicator ?? base.indicator,
-    tool: custom.tool ?? base.tool
-  };
-}
-
-/* =========================
-   اختيار أسئلة حسب الأسبوع (ثابتة/متغيرة بالأسبوع)
-   ========================= */
-
-function pickQuestions(skillId, week, count){
-  const all = QUESTION_BANK[skillId] || [];
-  const seed = hashSeed(`${skillId}|${week}|v1`);
-  const rng = mulberry32(seed);
-  const idx = shuffle([...Array(all.length).keys()], rng);
-
-  const picked = [];
-  for (let i=0; i<count; i++){
-    if (all.length === 0) break;
-    picked.push(all[idx[i % idx.length]]);
-  }
-  return picked;
-}
-
-/* =========================
-   عرض الأسئلة
-   ========================= */
-
-function renderQuestions(questions, showAnswers, skillId){
-  const letters = ["أ","ب","ج","د"];
-  const illDefault = illustrationFor(skillId);
-
-  const html = questions.map((qq, i)=>{
-    const ill = qq.ill || illDefault;
-    const illBlock = ill ? `<div class="mt-3">${ill}</div>` : "";
-
-    const opts = (qq.options || []).map((opt, j)=>{
-      return `
-        <div class="flex items-start gap-2">
-          <div class="mt-1 w-5 h-5 rounded-md border border-slate-300 flex items-center justify-center text-xs">${letters[j]||""}</div>
-          <div class="text-slate-800">${escDisp(opt)}</div>
-        </div>
-      `;
-    }).join("");
-
-    const answerBlock = showAnswers ? `
-      <div class="mt-3 text-sm rounded-xl border border-emerald-100 bg-emerald-50 p-3">
-        <div class="font-extrabold text-emerald-900">الإجابة: ${letters[qq.a]}</div>
-        <div class="text-emerald-800 mt-1">${escDisp(qq.ex || "")}</div>
-      </div>
-    ` : "";
-
-    return `
-      <div class="avoid-break rounded-2xl border border-slate-200 p-4">
-        <div class="flex items-start justify-between gap-3">
-          <div class="font-extrabold text-slate-900">س${toArabicDigits(i+1)}: ${escDisp(qq.q)}</div>
-        </div>
-        ${illBlock}
-        <div class="mt-3 grid sm:grid-cols-2 gap-3 text-sm">
-          ${opts}
-        </div>
-        ${answerBlock}
-      </div>
-    `;
-  }).join("");
-
-  return `<div class="space-y-4">${html}</div>`;
-}
-
-function renderFooter(){
-  $("footerPreview").innerText = toArabicDigits(state.ui.footerText || "");
-}
-
-function renderMetaLine(){
-  const info = state.info;
-  const parts = [];
-  if (info.schoolName) parts.push(`المدرسة: ${info.schoolName}`);
-  if (info.className) parts.push(`الصف/الشعبة: ${info.className}`);
-  if (info.teacherName) parts.push(`المعلم: ${info.teacherName}`);
-  if (info.termName) parts.push(`الفصل: ${info.termName}`);
-  if (info.yearName) parts.push(`العام: ${info.yearName}`);
-  return toArabicDigits(parts.join(" | "));
-}
-
-/* =========================
-   العرض: التبويبات
-   ========================= */
-
-function setTab(tab){
-  state.ui.tab = tab;
-  saveState();
-
-  document.querySelectorAll(".tab-btn").forEach(btn=>{
-    const active = btn.dataset.tab === tab;
-    btn.setAttribute("aria-selected", active ? "true" : "false");
-  });
-
-  ["dashboard","plan","training","quiz","bank"].forEach(t=>{
-    const el = $("tab-"+t);
-    if (!el) return;
-    el.classList.toggle("hidden", t !== tab);
-  });
-
-  // تحديثات تبويب محدد
-  if (tab === "plan") renderPlan();
-  if (tab === "bank") renderBank();
-}
-
-/* =========================
-   العرض: الخطة
-   ========================= */
-
-function renderPlan(){
-  const track = $("planTrack")?.value || state.ui.defaultTrack || "علاجي";
-  const domain = $("planDomain")?.value || "الكل";
-  const q = ($("planSearch")?.value || "").trim();
-
-  $("planMeta").innerText = renderMetaLine();
-  $("planMetaTrack").innerText = track;
-  $("todayDate").innerText = todayStr();
-
-  const rows = SKILLS
-    .filter(s => domain === "الكل" ? true : s.domain === domain)
-    .filter(s => {
-      if (!q) return true;
-      const tpl = PLAN_TEMPLATES[s.id];
-      const blob = `${s.title} ${(tpl?.objective||"")} ${(tpl?.proceduresTreat||"")} ${(tpl?.proceduresEnrich||"")}`.toLowerCase();
-      return blob.includes(q.toLowerCase());
-    })
-    .map(s => ({ skill: s, row: buildPlanRow(track, s) }));
-
-  $("planBody").innerHTML = rows.map(({skill, row})=>{
-    const editable = (field, value) =>
-      `<div contenteditable="true" class="min-h-[52px] whitespace-pre-wrap outline-none"
-           data-track="${escapeHtml(track)}" data-skill="${escapeHtml(skill.id)}" data-field="${escapeHtml(field)}">${escDisp(value)}</div>`;
-
-    return `
-      <tr class="align-top">
-        <td class="p-3 border-b border-slate-200">
-          <div class="font-extrabold text-slate-900">${escDisp(skill.title)}</div>
-          <div class="text-xs text-slate-500 mt-1">${escDisp(skill.domain)}</div>
-        </td>
-        <td class="p-3 border-b border-slate-200">${editable("objective", row.objective)}</td>
-        <td class="p-3 border-b border-slate-200">${editable("procedures", row.procedures)}</td>
-        <td class="p-3 border-b border-slate-200">${editable("responsible", row.responsible)}</td>
-        <td class="p-3 border-b border-slate-200">${editable("time", row.time)}</td>
-        <td class="p-3 border-b border-slate-200">${editable("indicator", row.indicator)}</td>
-        <td class="p-3 border-b border-slate-200">${editable("tool", row.tool)}</td>
-      </tr>
-    `;
-  }).join("");
-
-  // ربط حفظ التعديلات
-  $("planBody").querySelectorAll('[contenteditable="true"]').forEach(el=>{
-    el.addEventListener("blur", ()=>{
-      const t = el.dataset.track;
-      const skillId = el.dataset.skill;
-      const field = el.dataset.field;
-      const value = (el.innerText || "").trim();
-      setCustomPlan(t, skillId, field, value);
-    });
-  });
-}
-
-/* =========================
-   العرض: التدريب
-   ========================= */
-
-function renderTraining(){
-  const skillId = $("trainingSkill").value;
-  const skill = getSkillById(skillId);
-  const week = Number($("trainingWeek").value || 1);
-  const track = $("trainingTrack").value;
-  const showAnswers = ($("trainingAnswers").value === "show");
-
-  const qset = pickQuestions(skillId, week, 11); // 3+2+5+1
-  const recall = qset.slice(0,3);
-  const guided = qset.slice(3,5);
-  const independent = qset.slice(5,10);
-  const exit = qset.slice(10,11);
-
-  $("trainingTitle").innerText = `تدريب ${track}: ${skill.title}`;
-  $("trainingMeta").innerText = toArabicDigits(`${renderMetaLine()} | الأسبوع: ${week}`);
-  $("trainingStudent").innerText = state.info.studentName || "__________";
-  $("trainingDate").innerText = todayStr();
-
-  const sections = [
-    {title:"1) استرجاع سريع (3 أسئلة)", desc:"أجب بسرعة — الهدف تنشيط المهارة.", qs: recall},
-    {title:"2) تدريب موجّه (سؤالان)", desc:"حل مع المعلم ثم تحقق.", qs: guided},
-    {title:"3) تطبيق مستقل (5 أسئلة)", desc:"حل بنفسك ثم سلّم الورقة.", qs: independent},
-    {title:"4) بطاقة خروج (سؤال واحد)", desc:"يقيس الفهم النهائي.", qs: exit},
-  ];
-
-  $("trainingContent").innerHTML = sections.map(sec=>`
-    <div class="avoid-break rounded-3xl border border-slate-200 p-4">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-lg font-extrabold text-slate-900">${escDisp(sec.title)}</div>
-          <div class="text-sm text-slate-600 mt-1">${escDisp(sec.desc)}</div>
-        </div>
-      </div>
-      <div class="mt-4">
-        ${renderQuestions(sec.qs, showAnswers, skillId)}
-      </div>
-    </div>
-  `).join("") + renderFooterBlock();
-}
-
-/* =========================
-   العرض: الاختبار الأسبوعي
-   ========================= */
-
-function renderQuiz(){
-  const skillId = $("quizSkill").value;
-  const skill = getSkillById(skillId);
-  const week = Number($("quizWeek").value || 1);
-  const count = Number($("quizCount").value || 10);
-  const showAnswers = ($("quizAnswers").value === "show");
-
-  const qs = pickQuestions(skillId, week, count);
-
-  $("quizTitle").innerText = `اختبار أسبوعي — ${skill.title}`;
-  $("quizMeta").innerText = toArabicDigits(`${renderMetaLine()} | الأسبوع: ${week} | الزمن المقترح: 10–15 دقيقة`);
-  $("quizStudent").innerText = state.info.studentName || "__________";
-  $("quizDate").innerText = todayStr();
-
-  const header = `
-    <div class="avoid-break rounded-2xl border border-slate-200 p-4">
-      <div class="flex items-start justify-between gap-3 mb-3">
-        <img class="app-logo w-12 h-12 object-contain rounded-2xl border border-slate-200 bg-white p-1" alt="شعار"/>
-        <div class="text-sm text-slate-700 font-extrabold">اختبار أسبوعي — اختيار من متعدد</div>
-      </div>
-      <div class="grid sm:grid-cols-3 gap-3 text-sm">
-        <div><span class="text-slate-500">المدرسة:</span> <span class="font-bold">${escDisp(state.info.schoolName || "__________")}</span></div>
-        <div><span class="text-slate-500">الصف/الشعبة:</span> <span class="font-bold">${escDisp(state.info.className || "__________")}</span></div>
-        <div><span class="text-slate-500">الفصل:</span> <span class="font-bold">${escDisp(state.info.termName || "__________")}</span></div>
-        <div><span class="text-slate-500">اسم الطالب:</span> <span class="font-bold">${escDisp(state.info.studentName || "__________")}</span></div>
-        <div><span class="text-slate-500">التاريخ:</span> <span class="font-bold">${escDisp(todayStr())}</span></div>
-        <div><span class="text-slate-500">المعلم:</span> <span class="font-bold">${escDisp(state.info.teacherName || "__________")}</span></div>
-      </div>
-    </div>
-  `;
-
-  const body = renderQuestions(qs, false, skillId);
-
-  const answerKey = showAnswers ? `
-    <div class="page-break"></div>
-    <div class="avoid-break rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
-      <div class="text-lg font-extrabold text-emerald-900">نموذج الإجابة</div>
-      <div class="mt-3 grid sm:grid-cols-2 gap-2 text-sm">
-        ${qs.map((qq,i)=>`<div class="rounded-xl bg-white border border-emerald-200 p-2">
-          <span class="font-extrabold">س${toArabicDigits(i+1)}:</span> <span class="mono">${["أ","ب","ج","د"][qq.a]}</span>
-          <div class="text-emerald-800 mt-1">${escDisp(qq.ex||"")}</div>
-        </div>`).join("")}
-      </div>
-    </div>
-  ` : "";
-
-  $("quizContent").innerHTML = header + `<div class="mt-4">${body}</div>` + answerKey + renderFooterBlock();
-}
-
-/* =========================
-   العرض: بنك الأسئلة
-   ========================= */
-
-function renderBank(){
-  const skillId = $("bankSkill").value;
-  const q = ($("bankSearch").value || "").trim().toLowerCase();
-  const skill = getSkillById(skillId);
-
-  const all = (QUESTION_BANK[skillId] || []).filter(qq=>{
-    if (!q) return true;
-    const blob = `${qq.q} ${qq.options.join(" ")} ${qq.ex||""}`.toLowerCase();
-    return blob.includes(q);
-  });
-
-  const summary = `
-    <div class="rounded-2xl border border-slate-200 p-4">
-      <div class="flex items-start justify-between gap-3">
-        <img class="app-logo w-12 h-12 object-contain rounded-2xl border border-slate-200 bg-white p-1" alt="شعار"/>
-        <div>
-          <div class="text-xl font-extrabold text-slate-900">${escDisp(skill.title)}</div>
-      <div class="text-sm text-slate-600 mt-1">${escDisp(skill.domain)} | عدد الأسئلة: ${toArabicDigits(all.length)}</div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const list = all.map((qq,i)=>`
-    <div class="avoid-break rounded-2xl border border-slate-200 p-4">
-      <div class="font-extrabold text-slate-900">س${toArabicDigits(i+1)}: ${escDisp(qq.q)}</div>
-      <div class="mt-3 grid sm:grid-cols-2 gap-2 text-sm text-slate-800">
-        ${qq.options.map((o,idx)=>`<div class="${idx===qq.a ? "font-extrabold text-emerald-800" : ""}">• ${escDisp(o)}</div>`).join("")}
-      </div>
-      <div class="mt-3 text-sm text-slate-600">${escDisp(qq.ex||"")}</div>
-    </div>
-  `).join("");
-
-  $("bankContent").innerHTML = summary + `<div class="mt-4 space-y-4">${list}</div>` + renderFooterBlock();
-}
-
-function renderFooterBlock(){
-  const ft = state.ui.footerText || "";
-  if (!ft.trim()) return "";
-  return `
-    <div class="mt-6 text-center text-xs text-slate-500">
-      <div>${escDisp(ft)}</div>
-    </div>
-  `;
-}
-
-/* =========================
-   ربط عناصر الواجهة
-   ========================= */
-
-function hydrateInputs(){
-  // Dashboard inputs
-  $("schoolName").value = state.info.schoolName;
-  $("className").value = state.info.className;
-  $("teacherName").value = state.info.teacherName;
-  $("termName").value = state.info.termName;
-  $("yearName").value = state.info.yearName;
-  $("studentName").value = state.info.studentName;
-
-  $("defaultTrack").value = state.ui.defaultTrack;
-  $("defaultAnswerKey").value = state.ui.defaultAnswerKey;
-  $("footerText").value = state.ui.footerText;
-
-  // Footer preview
-  renderFooter();
-
-  // Plan filters
-  $("planTrack").innerHTML = `<option value="علاجي">علاجي</option><option value="إثرائي">إثرائي</option>`;
-  $("planTrack").value = state.ui.defaultTrack || "علاجي";
-
-  $("planDomain").innerHTML = domainsList().map(d=>`<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join("");
-  $("planDomain").value = "الكل";
-
-  // Skills dropdowns
-  const skillOptions = SKILLS.map(s=>`<option value="${escapeHtml(s.id)}">${escapeHtml(s.title)}</option>`).join("");
-  ["trainingSkill","quizSkill","bankSkill"].forEach(id => { $(id).innerHTML = skillOptions; });
-
-  // Defaults for answers toggles
-  $("quizAnswers").value = state.ui.defaultAnswerKey || "hide";
-  $("trainingAnswers").value = state.ui.defaultAnswerKey || "hide";
-
-  // Student placeholders in print sections
-  $("trainingStudent").innerText = state.info.studentName || "__________";
-  $("quizStudent").innerText = state.info.studentName || "__________";
-  $("trainingDate").innerText = todayStr();
-  $("quizDate").innerText = todayStr();
-}
-
-function bindEvents(){
-  // Tabs
-  document.querySelectorAll(".tab-btn").forEach(btn=>{
-    btn.addEventListener("click", ()=> setTab(btn.dataset.tab));
-  });
-
-  // Dashboard data binding
-  const infoIds = ["schoolName","className","teacherName","termName","yearName","studentName"];
-  infoIds.forEach(id=>{
-    $(id).addEventListener("input", ()=>{
-      state.info[id] = $(id).value;
-      saveState();
-      $("planMeta").innerText = renderMetaLine();
-      $("trainingStudent").innerText = state.info.studentName || "__________";
-      $("quizStudent").innerText = state.info.studentName || "__________";
-    });
-  });
-
-  $("defaultTrack").addEventListener("change", ()=>{
-    state.ui.defaultTrack = $("defaultTrack").value;
-    saveState();
-    $("planTrack").value = state.ui.defaultTrack;
-  });
-
-  $("defaultAnswerKey").addEventListener("change", ()=>{
-    state.ui.defaultAnswerKey = $("defaultAnswerKey").value;
-    saveState();
-    $("quizAnswers").value = state.ui.defaultAnswerKey;
-    $("trainingAnswers").value = state.ui.defaultAnswerKey;
-  });
-
-  $("footerText").addEventListener("input", ()=>{
-    state.ui.footerText = $("footerText").value;
-    saveState();
-    renderFooter();
-  });
-
-  $("btnGoPlan").addEventListener("click", ()=> setTab("plan"));
-
-  // Plan filters
-  ["planTrack","planDomain","planSearch","planTarget"].forEach(id=>{
-    $(id).addEventListener("input", renderPlan);
-    $(id).addEventListener("change", renderPlan);
-  });
-
-  $("btnPrintPlan").addEventListener("click", ()=> printOnly("tab-plan"));
-  $("btnResetPlan").addEventListener("click", ()=>{
-    resetPlanCustom();
-    renderPlan();
-  });
-
-  // Training
-  $("btnGenerateTraining").addEventListener("click", renderTraining);
-  $("btnPrintTraining").addEventListener("click", ()=> printOnly("tab-training"));
-
-  // Quiz
-  $("btnGenerateQuiz").addEventListener("click", renderQuiz);
-  $("btnPrintQuiz").addEventListener("click", ()=> printOnly("tab-quiz"));
-
-  // Bank
-  $("bankSkill").addEventListener("change", renderBank);
-  $("bankSearch").addEventListener("input", renderBank);
-  $("btnPrintBank").addEventListener("click", ()=> printOnly("tab-bank"));
-
-  // Print cover
-  $("btnPrintCover").addEventListener("click", ()=>{
-    setTab("dashboard");
-    printOnly("tab-dashboard");
-  });
-
-  // Global print
-  $("btnPrint").addEventListener("click", ()=> window.print());
-
-  // Export / Import
-  $("btnExport").addEventListener("click", exportData);
-  $("importFile").addEventListener("change", importData);
-  $("btnResetAll").addEventListener("click", ()=>{
-    if (!confirm("هل تريد إعادة ضبط كل شيء؟ سيتم حذف التعديلات والبيانات.")) return;
-    localStorage.removeItem(STORAGE_KEY);
-    state = loadState();
-    hydrateInputs();
-    setTab("dashboard");
-    renderPlan();
-  });
-}
-
-function exportData(){
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "nafes_grade3_plan_data.json";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-}
-
-function importData(evt){
-  const file = evt.target.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const imported = safeParse(reader.result, null);
-    if (!imported) { alert("ملف غير صالح."); return; }
-    state = {
-      ...DEFAULT_STATE,
-      ...imported,
-      info: { ...DEFAULT_STATE.info, ...(imported.info||{}) },
-      ui: { ...DEFAULT_STATE.ui, ...(imported.ui||{}) },
-      plan: { ...DEFAULT_STATE.plan, ...(imported.plan||{}), custom: imported.plan?.custom || {} }
-    };
-    saveState();
-    hydrateInputs();
-    setTab(state.ui.tab || "dashboard");
-    renderPlan();
-    alert("تم الاستيراد بنجاح.");
-  };
-  reader.readAsText(file);
-  evt.target.value = "";
-}
-
-/* =========================
-   طباعة تبويب واحد فقط
-   ========================= */
-function printOnly(tabId){
-  const tabs = ["tab-dashboard","tab-plan","tab-training","tab-quiz","tab-bank"];
-  const prev = state.ui.tab;
-  tabs.forEach(id=>{
-    const el = $(id);
-    if (!el) return;
-    el.classList.toggle("hidden", id !== tabId);
-  });
-  window.print();
-  // ارجع
-  tabs.forEach(id=>{
-    const el = $(id);
-    if (!el) return;
-    el.classList.toggle("hidden", id !== ("tab-"+prev));
-  });
-}
-
-/* =========================
-   تشغيل أولي
-   ========================= */
-(function init(){
-  applyLogo();
-  hydrateInputs();
-  bindEvents();
-  setTab(state.ui.tab || "dashboard");
-
-  // تهيئة بيانات الطباعة في الخطة
-  $("planMeta").innerText = renderMetaLine();
-  $("planMetaTrack").innerText = $("planTrack").value || state.ui.defaultTrack;
-  $("todayDate").innerText = todayStr();
-})();
-</script>
-</body>
-</html>
